@@ -9,3 +9,9 @@ VALUES
     ('Produto 2', 20.0),
     ('Produto 3', 20.0)
 ;
+
+INSERT INTO pedido (pessoa_id)
+VALUES
+    (1),
+    (2)
+;

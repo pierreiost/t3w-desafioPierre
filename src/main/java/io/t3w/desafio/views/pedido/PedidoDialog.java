@@ -8,6 +8,7 @@ import io.t3w.desafio.components.T3WFormLayout;
 import io.t3w.desafio.data.entity.Pedido;
 import io.t3w.desafio.data.entity.PedidoItem;
 import io.t3w.desafio.data.entity.Pessoa;
+import io.t3w.desafio.services.PedidoService;
 import io.t3w.desafio.services.ProdutoService;
 import org.vaadin.firitin.components.button.VButton;
 import org.vaadin.firitin.components.combobox.VComboBox;
@@ -21,7 +22,7 @@ import java.util.function.Consumer;
 
 public class PedidoDialog extends VDialog {
 
-    public PedidoDialog(final Pedido pedido, final ProdutoService produtoService, final Consumer<Pedido> consumer) {
+    public PedidoDialog(final Pedido pedido, final PedidoService pedidoService, final Consumer<Pedido> consumer) {
         setHeaderTitle("Pedido");
         setWidthFull();
 

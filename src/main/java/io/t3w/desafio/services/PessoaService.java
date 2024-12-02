@@ -1,7 +1,9 @@
 package io.t3w.desafio.services;
 
 import io.t3w.desafio.data.dao.PessoaDAO;
+import io.t3w.desafio.data.dao.ProdutoDAO;
 import io.t3w.desafio.data.entity.Pessoa;
+import io.t3w.desafio.data.entity.Produto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,12 +25,26 @@ public class PessoaService {
     }
 
     public Pessoa save(final Pessoa pessoa) {
-        // TODO: Implementar update e insert da pessoa
+        // TODO: Implementar update e insert da pessoa - Finalizado
         try (final var connection = dataSource.getConnection()) {
-            return null;
+            PessoaDAO pessoaDAO = new PessoaDAO(connection);
+            if (pessoaDAO.findById(pessoa.getId()) != null) {
+                pessoaDAO.update(pessoa);
+            } else {
+                pessoaDAO.insert(pessoa);
+            }
+            return pessoa;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
+    public void delete(Pessoa pessoa) {
+        try (final var connection = dataSource.getConnection()) {
+            PessoaDAO pessoaDAO = new PessoaDAO(connection);
+            pessoaDAO.delete((int) pessoa.getId());
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao remover o produto", e);
+        }
+    }
 }

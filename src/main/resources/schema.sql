@@ -12,4 +12,16 @@ CREATE TABLE produto
     valor_unitario NUMERIC(10, 2) NOT NULL
 );
 
+CREATE TABLE pedido
+(
+    id         INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    pessoa_id  INTEGER NOT NULL REFERENCES pessoa(id) ON DELETE CASCADE
+);
 
+CREATE TABLE pedidoitem
+(
+    id           INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    pedido_id    INTEGER NOT NULL REFERENCES pedido(id)  ON DELETE CASCADE,
+    produto_id   INTEGER NOT NULL REFERENCES produto(id),
+    quantidade   INTEGER NOT NULL
+);

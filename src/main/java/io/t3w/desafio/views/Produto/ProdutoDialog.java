@@ -16,7 +16,7 @@ import java.util.function.Consumer;
 public class ProdutoDialog extends VDialog {
 
     public ProdutoDialog(final Produto produto, final ProdutoService produtoService, final Consumer<Produto> consumer) {
-        setHeaderTitle("Pessoa");
+        setHeaderTitle("Produto");
 
         final var form = new T3WFormLayout();
         this.add(form);
@@ -36,8 +36,9 @@ public class ProdutoDialog extends VDialog {
 
         final var btnSalvar = new T3WButton("Salvar").themePrimary()
             .withClickListener(ev -> {
-                // TODO: Implementar update e insert do produto
-//                final var produtoSalvo = produtoService.save(binder.getObject());
+                // TODO: Implementar update e insert do produto - Finalizado
+                final var produtoSalvo = binder.getObject();
+                consumer.accept(produtoSalvo);
                 this.close();
             });
 

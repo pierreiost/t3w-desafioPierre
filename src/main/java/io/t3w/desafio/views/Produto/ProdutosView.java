@@ -5,11 +5,15 @@ import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.router.*;
 import io.t3w.desafio.components.T3WButton;
 import io.t3w.desafio.components.T3WFormLayout;
+import io.t3w.desafio.data.entity.Pessoa;
 import io.t3w.desafio.data.entity.Produto;
 import io.t3w.desafio.services.ProdutoService;
 import org.vaadin.firitin.components.grid.VGrid;
 import org.vaadin.firitin.components.html.VDiv;
 import org.vaadin.firitin.components.orderedlayout.VVerticalLayout;
+import com.vaadin.flow.component.notification.Notification;
+
+import java.util.List;
 
 @Route("produtos")
 @PageTitle("Produtos")
@@ -30,18 +34,38 @@ public class ProdutosView extends VVerticalLayout implements BeforeEnterObserver
 
         final var btnAdicionar = new T3WButton("Adicionar").themeTertiaryInline().themeSmall().withClassName("grid-actions")
             .withClickListener(ev -> new ProdutoDialog(new Produto(), produtoService, consumerProduto -> {
-                // TODO: Produto deve ser adicionado na base de dados e no `gridProdutos`
+                // TODO: Produto deve ser adicionado na base de dados e no `gridProdutos` - Finalizado
+                try {
+                    Notification.show("Produto adicionado com sucesso!", 3000, Notification.Position.MIDDLE);
+                    gridProdutos.setItems(produtoService.findProdutos());
+                } catch (Exception e) {
+                    Notification.show("Erro ao adicionar produto: " + e.getMessage(), 3000, Notification.Position.MIDDLE);
+                }
             }).open());
 
         gridProdutos.addColumn(new ComponentRenderer<>(produto -> {
             final var btnEditar = new T3WButton("Editar").themeTertiaryInline().themeSmall()
                 .withClickListener(ev -> new ProdutoDialog(produto, produtoService, consumerProduto -> {
-                    // TODO: Produto deve ser removido da base de dados e do `gridProdutos`
+                    try {
+                        // TODO: Produto deve ser editado da base de dados e do gridProdutos - Finalizado
+                        produtoService.save(produto);
+                        gridProdutos.setItems(produtoService.findProdutos());
+                        Notification.show("Produto editado com sucesso!", 3000, Notification.Position.MIDDLE);
+                    } catch (Exception e) {
+                        Notification.show("Erro ao editar o produto: " + e.getMessage(), 5000, Notification.Position.MIDDLE);
+                    }
                 }).open());
 
             final var btnRemover = new T3WButton("Excluir").themeTertiaryInline().themeError().themeSmall()
                 .withClickListener(ev -> {
-                    // TODO: Produto deve ser removido da base de dados e do `gridProdutos`
+                    try {
+                        // TODO: Produto deve ser removido da base de dados e do gridProdutos - Finalizado
+                        produtoService.delete(produto);
+                        gridProdutos.setItems(produtoService.findProdutos());
+                        Notification.show("Produto excluído com sucesso!", 3000, Notification.Position.MIDDLE);
+                    } catch (Exception e) {
+                        Notification.show("Erro ao excluir o produto: " + e.getMessage(), 5000, Notification.Position.MIDDLE);
+                    }
                 });
 
             return new VDiv(btnEditar, btnRemover).withClassName("grid-actions");
@@ -55,6 +79,9 @@ public class ProdutosView extends VVerticalLayout implements BeforeEnterObserver
     @Override
     public void beforeEnter(final BeforeEnterEvent beforeEnterEvent) {
          // TODO: deve buscar os produtos na base de dados e expor os dados no grid
-        gridProdutos.setItems();
+        gridProdutos.setItems( List.of(
+            new Produto().setId(1),
+            new Produto().setId(2)
+        ));
     }
 }

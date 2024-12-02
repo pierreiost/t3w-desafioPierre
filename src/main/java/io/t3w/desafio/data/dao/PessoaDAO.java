@@ -18,6 +18,27 @@ public class PessoaDAO extends DAO {
             .setCpf(rs.getString("cpf"));
     }
 
+    //Método para atualizar cadastro da pessoa
+    public void update(Pessoa pessoa) throws SQLException {
+        String sql = "UPDATE pessoa SET nome = ?, cpf = ? WHERE id = ?";
+        try (PreparedStatement stmt = getConnection().prepareStatement(sql)) {
+            stmt.setString(1, pessoa.getNome());
+            stmt.setString(2, pessoa.getCpf());
+            stmt.setLong(3, pessoa.getId());
+            stmt.executeUpdate();
+        }
+    }
+
+    //Método para criar cadastro da pessoa
+    public void insert(Pessoa pessoa) throws SQLException {
+        String sql = "INSERT INTO pessoa (nome, cpf) VALUES (?, ?)";
+        try (PreparedStatement stmt = getConnection().prepareStatement(sql)) {
+            stmt.setString(1, pessoa.getNome());
+            stmt.setString(2, pessoa.getCpf());
+            stmt.executeUpdate();
+        }
+    }
+
     public PessoaDAO(final Connection connection) {
         super(connection);
     }
@@ -35,6 +56,32 @@ public class PessoaDAO extends DAO {
                 }
                 return pessoas;
             }
+        }
+    }
+
+    // Método para procurar pessoas já existentes no banco pelo ID
+    public Pessoa findById(Long id) throws SQLException {
+        String sql = "SELECT id, nome, cpf FROM pessoa WHERE id = ?";
+        try (PreparedStatement psmt = getConnection().prepareStatement(sql)) {
+            psmt.setLong(1, id);
+            try (ResultSet rs = psmt.executeQuery()) {
+                if (rs.next()) {
+                    return new Pessoa(
+                        rs.getLong("id"),
+                        rs.getString("nome"),
+                        rs.getString("cpf")
+                    );
+                }
+            }
+        }
+        return null;
+    }
+
+    public void delete(int id) throws SQLException {
+        String sql = "DELETE FROM pessoa WHERE id = ?";
+        try (PreparedStatement stmt = getConnection().prepareStatement(sql)) {
+            stmt.setLong(1, id);
+            stmt.executeUpdate();
         }
     }
 }

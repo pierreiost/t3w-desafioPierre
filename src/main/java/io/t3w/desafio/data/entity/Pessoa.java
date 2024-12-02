@@ -6,6 +6,13 @@ public class Pessoa {
     private String cpf;
     private String nome;
 
+    // Construtores da entidade pessoa.
+    public Pessoa(long id, String nome, String cpf) {
+    }
+
+    public Pessoa() {
+    }
+
     public long getId() {
         return id;
     }

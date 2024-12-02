@@ -10,6 +10,7 @@ import org.vaadin.firitin.components.formlayout.VFormLayout;
 import org.vaadin.firitin.components.grid.VGrid;
 import org.vaadin.firitin.components.html.VDiv;
 import org.vaadin.firitin.components.orderedlayout.VVerticalLayout;
+import com.vaadin.flow.component.notification.Notification;
 
 import java.util.List;
 
@@ -32,22 +33,43 @@ public class PessoasView extends VVerticalLayout implements BeforeEnterObserver 
         gridPessoas.addColumn(Pessoa::getCpf).setHeader("Cpf");
 
         final var btnAdicionar = new T3WButton("Adicionar").themeTertiaryInline().themeSmall().withClassName("grid-actions")
-            .withClickListener(ev -> new PessoaDialog(new Pessoa(), pessoaService, c -> {
-                // TODO: Adicionar pessoa ao grid
-            }).open());
+            .withClickListener(ev -> {
+                new PessoaDialog(new Pessoa(), pessoaService, pessoaSalva -> {
+                    try {
+                        gridPessoas.setItems(pessoaService.findPessoas());
+                        Notification.show("Pessoa adicionada com sucesso!", 3000, Notification.Position.MIDDLE);
+                    } catch (Exception e) {
+                        Notification.show("Erro ao adicionar a pessoa: " + e.getMessage(), 5000, Notification.Position.MIDDLE);
+                    }
+                }).open();
+            });
+
 
         gridPessoas.addColumn(new ComponentRenderer<>(pessoa -> {
             final var btnEditar = new T3WButton("Editar").themeTertiaryInline().themeSmall()
-                .withClickListener(ev -> new PessoaDialog(pessoa, pessoaService, c -> {
-                    // TODO: Atualizar pessoa do grid
+                .withClickListener(ev -> new PessoaDialog(pessoa, pessoaService, pessoaAtualizada -> {
+                    try {
+                        pessoaService.save(pessoaAtualizada);
+                        gridPessoas.setItems(pessoaService.findPessoas());
+                        Notification.show("Pessoa atualizada com sucesso!", 3000, Notification.Position.MIDDLE);
+                    } catch (Exception e) {
+                        Notification.show("Erro ao atualizar a pessoa: " + e.getMessage(), 5000, Notification.Position.MIDDLE);
+                    }
                 }).open());
 
-            final var btnRemover = new T3WButton("Excluir").themeTertiaryInline().themeError().themeSmall()
+            final var btnExcluir = new T3WButton("Excluir").themeError().themeSmall()
                 .withClickListener(ev -> {
-                    // TODO: Remover pessoa do grid
+                    try {
+                        pessoaService.delete(pessoa);
+                        gridPessoas.setItems(pessoaService.findPessoas());
+                        Notification.show("Pessoa excluída com sucesso!", 3000, Notification.Position.MIDDLE);
+                    } catch (Exception e) {
+                        Notification.show("Erro ao excluir a pessoa: " + e.getMessage(), 5000, Notification.Position.MIDDLE);
+                    }
                 });
 
-            return new VDiv(btnEditar, btnRemover).withClassName("grid-actions");
+            return new VDiv(btnEditar, btnExcluir).withClassName("grid-actions");
+
         })).setHeader(btnAdicionar);
 
         final var options = new VFormLayout().withFullWidth();

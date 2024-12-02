@@ -7,6 +7,13 @@ public class Produto {
     private String descricao;
     private BigDecimal valorUnitario;
 
+    public Produto(long id, String descricao, BigDecimal valorUnitario) {
+    }
+
+    public Produto() {
+
+    }
+
     public int getId() {
         return id;
     }
